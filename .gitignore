@@ -1,0 +1,14 @@
+# env
+.env
+
+# Backend (Symfony)
+apps/kaizenforge-api/vendor/
+apps/kaizenforge-api/var/
+
+# Frontend (Vite)
+apps/kaizenforge-web/node_modules/
+apps/kaizenforge-web/dist/
+apps/kaizenforge-web/.eslintcache
+
+# OS
+.DS_Store
