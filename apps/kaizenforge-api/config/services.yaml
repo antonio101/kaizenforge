@@ -7,3 +7,13 @@ services:
     resource: '../src/'
     exclude:
       - '../src/Kernel.php'
+
+      - '../src/Contexts/**/Domain/'
+      - '../src/Shared/**/Domain/'
+
+      - '../src/Contexts/**/Application/Command/'
+      - '../src/Contexts/**/Application/Query/'
+      - '../src/Contexts/**/Application/DTO/'
+
+      - '../src/Contexts/**/Infrastructure/Persistence/**/Entity/'
+      - '../src/Contexts/**/Infrastructure/Http/Request/'
