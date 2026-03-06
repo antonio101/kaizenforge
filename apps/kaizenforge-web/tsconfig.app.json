@@ -8,13 +8,31 @@
     "skipLibCheck": true,
 
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
 
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/app/*": ["src/app/*"],
+      "@/components/*": ["src/components/*"],
+      "@/features/*": ["src/features/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/infra/*": ["src/infra/*"],
+      "@/config/*": ["src/config/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@/test/*": ["src/test/*"]
+    },
+
     "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
