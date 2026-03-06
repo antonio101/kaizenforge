@@ -10,22 +10,21 @@ doctrine:
     report_fields_where_declared: true
     validate_xml_mapping: true
     naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-
     auto_mapping: false
     mappings:
-      Contexts:
+      Auth:
         type: attribute
         is_bundle: false
-        dir: '%kernel.project_dir%/src/Contexts'
-        prefix: 'App\Contexts'
-        alias: Contexts
+        dir: '%kernel.project_dir%/src/Contexts/Auth/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Auth
 
-      Shared:
-        type: attribute
-        is_bundle: false
-        dir: '%kernel.project_dir%/src/Shared'
-        prefix: 'App\Shared'
-        alias: Shared
+      # Habits:
+      #   type: attribute
+      #   is_bundle: false
+      #   dir: '%kernel.project_dir%/src/Contexts/Habits/Infrastructure/Persistence/Doctrine/Entity'
+      #   prefix: 'App\Contexts\Habits\Infrastructure\Persistence\Doctrine\Entity'
+      #   alias: Habits
 
 when@test:
   doctrine:

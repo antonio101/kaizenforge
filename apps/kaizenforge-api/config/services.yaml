@@ -17,3 +17,15 @@ services:
 
       - '../src/Contexts/**/Infrastructure/Persistence/**/Entity/'
       - '../src/Contexts/**/Infrastructure/Http/Request/'
+
+  App\Contexts\Auth\Domain\Repository\UserRepository:
+    alias: App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository
+
+  App\Contexts\Auth\Domain\Repository\AccessTokenRepository:
+    alias: App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Repository\DoctrineAccessTokenRepository
+
+  App\Contexts\Auth\Application\Port\PasswordVerifier:
+    alias: App\Contexts\Auth\Infrastructure\Security\SymfonyPasswordVerifier
+
+  App\Contexts\Auth\Domain\Service\TokenGenerator:
+    alias: App\Contexts\Auth\Infrastructure\Security\RandomTokenGenerator

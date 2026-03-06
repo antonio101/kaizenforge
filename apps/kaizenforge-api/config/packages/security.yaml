@@ -2,19 +2,43 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Entity\DoctrineUser: 'auto'
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # We load users from DB (Context Auth), not in-memory
+        kf_users:
+            entity:
+                class: App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Entity\DoctrineUser
+                property: id
 
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
+
+        # Public endpoint: login
+        login:
+            pattern: ^/api/v1/auth/login$
+            stateless: true
+            security: false
+
+        # Protected API: everything under /api (except login above)
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: kf_users
+
+            # Authenticate via Bearer token (opaque token stored/validated server-side)
+            access_token:
+                token_handler: App\Contexts\Auth\Infrastructure\Security\AccessTokenHandler
+
+        # Default firewall (optional, keeps Symfony's default structure)
         main:
             lazy: true
-            provider: users_in_memory
+            # No provider needed here unless you plan to use session-based pages.
+            # provider: kf_users
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -24,6 +48,12 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
+        # Public access to login
+        - { path: ^/api/v1/auth/login$, roles: PUBLIC_ACCESS }
+
+        # Everything else under /api requires auth
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
