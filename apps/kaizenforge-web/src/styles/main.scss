@@ -1,0 +1,97 @@
+@use './_variables' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: $font-family-base;
+  color: $color-text-primary;
+  background:
+    radial-gradient(circle at top, rgba(124, 58, 237, 0.2), transparent 28%),
+    linear-gradient(180deg, #0f172a 0%, $color-background 100%);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.appRoot {
+  min-height: 100vh;
+}
+
+.appShell {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: $space-8;
+
+  &Card {
+    width: min(100%, $container-width-md);
+    padding: $space-10;
+    border: 1px solid $color-surface-border;
+    border-radius: $radius-lg;
+    background: $color-surface;
+    box-shadow: $shadow-md;
+    backdrop-filter: blur(0.75rem);
+  }
+
+  &Eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: $space-2 $space-3;
+    border-radius: 999rem;
+    background: $color-accent-soft;
+    color: #c4b5fd;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  &Title {
+    margin: $space-6 0 $space-4;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  &Description {
+    margin: 0;
+    color: $color-text-secondary;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+}
