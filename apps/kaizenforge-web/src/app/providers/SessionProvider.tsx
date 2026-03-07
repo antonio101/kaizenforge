@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react'
+import type { Session } from '@/features/auth/types/session'
 import {
   createContext,
   useCallback,
@@ -7,52 +8,45 @@ import {
   useState,
 } from 'react'
 
-type Session = {
-  accessToken: string
-} | null
+import { authSessionStorage } from '@/infra/storage/authSessionStorage'
 
 type SessionContextValue = {
-  session: Session
+  session: Session | null
   isAuthenticated: boolean
   isSessionHydrated: boolean
-  handleSetSession: (nextSession: Exclude<Session, null>) => void
+  handleSetSession: (nextSession: Session) => void
   handleClearSession: () => void
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null)
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  const [session, setSession] = useState<Session>(null)
-
-  const [isSessionHydrated] = useState(true)
-
-  const handleSetSession = useCallback(
-    (nextSession: Exclude<Session, null>) => {
-      setSession(nextSession)
-    },
-    []
+  const [session, setSession] = useState<Session | null>(() =>
+    authSessionStorage.getSession()
   )
+
+  const handleSetSession = useCallback((nextSession: Session) => {
+    setSession(nextSession)
+    authSessionStorage.setSession(nextSession)
+  }, [])
 
   const handleClearSession = useCallback(() => {
     setSession(null)
+    authSessionStorage.clearSession()
   }, [])
 
   const value = useMemo<SessionContextValue>(
     () => ({
       session,
       isAuthenticated: session !== null,
-      isSessionHydrated,
+      isSessionHydrated: true,
       handleSetSession,
       handleClearSession,
     }),
-    [session, isSessionHydrated, handleSetSession, handleClearSession]
+    [session, handleSetSession, handleClearSession]
   )
 
-  return (
-    <SessionContext.Provider value={value}>
-      {children}
-    </SessionContext.Provider>
-  )
+  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }
 
 export function useSession() {
