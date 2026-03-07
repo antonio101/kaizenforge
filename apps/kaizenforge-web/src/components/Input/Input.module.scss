@@ -1,0 +1,49 @@
+@use '@/styles/_variables' as *;
+
+.Input {
+  min-height: $control-height-md;
+  padding: 0 $space-4;
+  border: 1px solid $color-surface-border;
+  border-radius: $radius-md;
+  background: $color-input-background;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+  transition:
+    border-color $transition-base,
+    box-shadow $transition-base,
+    background-color $transition-base;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+
+  &:hover {
+    border-color: rgba(148, 163, 184, 0.24);
+  }
+
+  &:focus-visible {
+    border-color: $color-accent;
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    border-color: $color-surface-border;
+    background: $color-input-background-disabled;
+    color: $color-text-disabled;
+  }
+}
+
+.hasError {
+  border-color: $color-border-danger;
+  background: $color-danger-soft;
+
+  &:focus-visible {
+    border-color: $color-danger;
+    box-shadow: 0 0 0 0.25rem rgba(248, 113, 113, 0.18);
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}

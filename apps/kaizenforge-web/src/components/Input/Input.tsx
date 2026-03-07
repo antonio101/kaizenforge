@@ -1,0 +1,30 @@
+import type { InputHTMLAttributes } from 'react'
+import { forwardRef } from 'react'
+
+import styles from './Input.module.scss'
+
+export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+  hasError?: boolean
+  fullWidth?: boolean
+}
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className, hasError = false, fullWidth = false, ...props },
+  ref
+) {
+  const inputClassNames = [styles.Input]
+
+  if (hasError) {
+    inputClassNames.push(styles.hasError)
+  }
+
+  if (fullWidth) {
+    inputClassNames.push(styles.fullWidth)
+  }
+
+  if (className) {
+    inputClassNames.push(className)
+  }
+
+  return <input ref={ref} className={inputClassNames.join(' ')} {...props} />
+})

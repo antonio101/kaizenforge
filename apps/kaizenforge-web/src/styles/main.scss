@@ -39,59 +39,32 @@ button {
   cursor: pointer;
 }
 
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: $color-placeholder;
+}
+
+a {
+  color: inherit;
+}
+
 img,
 svg {
   display: block;
   max-width: 100%;
 }
 
+:focus-visible {
+  outline: none;
+}
+
 #root {
   min-height: 100vh;
-}
-
-.appRoot {
-  min-height: 100vh;
-}
-
-.appShell {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  padding: $space-8;
-
-  &Card {
-    width: min(100%, $container-width-md);
-    padding: $space-10;
-    border: 1px solid $color-surface-border;
-    border-radius: $radius-lg;
-    background: $color-surface;
-    box-shadow: $shadow-md;
-    backdrop-filter: blur(0.75rem);
-  }
-
-  &Eyebrow {
-    display: inline-flex;
-    align-items: center;
-    padding: $space-2 $space-3;
-    border-radius: 999rem;
-    background: $color-accent-soft;
-    color: #c4b5fd;
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  &Title {
-    margin: $space-6 0 $space-4;
-    font-size: clamp(2rem, 4vw, 3.25rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  &Description {
-    margin: 0;
-    color: $color-text-secondary;
-    font-size: 1rem;
-    line-height: 1.7;
-  }
 }
