@@ -1,0 +1,49 @@
+@use '@/styles/_variables' as *;
+
+.NotFoundPage {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: $space-8;
+
+  .card {
+    width: min(100%, 32rem);
+    padding: $space-10;
+    border: 1px solid $color-surface-border;
+    border-radius: $radius-lg;
+    background: $color-surface;
+    box-shadow: $shadow-md;
+    text-align: center;
+    backdrop-filter: blur(0.75rem);
+  }
+
+  .code {
+    margin: 0 0 $space-3;
+    color: #c4b5fd;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .title {
+    margin: 0 0 $space-4;
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .description {
+    margin: 0 0 $space-6;
+    color: $color-text-secondary;
+    line-height: 1.7;
+  }
+
+  .link {
+    color: $color-text-primary;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+}

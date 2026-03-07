@@ -26,7 +26,10 @@
       "@/styles/*": ["src/styles/*"],
       "@/utils/*": ["src/utils/*"],
       "@/assets/*": ["src/assets/*"],
-      "@/test/*": ["src/test/*"]
+      "@/test/*": ["src/test/*"],
+      "@/router/*": ["src/router/*"],
+      "@/layouts/*": ["src/layouts/*"],
+      "@/types/*": ["src/types/*"]
     },
 
     "strict": true,

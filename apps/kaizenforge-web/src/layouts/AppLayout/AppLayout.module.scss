@@ -1,0 +1,84 @@
+@use '@/styles/_variables' as *;
+
+.AppLayout {
+  min-height: 100vh;
+  padding: $space-8;
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin-bottom: $space-8;
+  }
+
+  .headerInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-6;
+    width: min(100%, 80rem);
+    margin: 0 auto;
+    padding: $space-4 $space-6;
+    border: 1px solid $color-surface-border;
+    border-radius: $radius-lg;
+    background: rgba(15, 23, 42, 0.72);
+    box-shadow: $shadow-md;
+    backdrop-filter: blur(0.75rem);
+  }
+
+  .brandBlock {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  .brandEyebrow {
+    color: #c4b5fd;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .brandTitle {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .sessionStatus {
+    color: $color-text-secondary;
+    font-size: 0.9375rem;
+    text-align: right;
+  }
+
+  .main {
+    width: min(100%, 80rem);
+    margin: 0 auto;
+  }
+
+  .content {
+    min-height: calc(100vh - 10rem);
+    padding: $space-8;
+    border: 1px solid $color-surface-border;
+    border-radius: $radius-lg;
+    background: $color-surface;
+    box-shadow: $shadow-md;
+    backdrop-filter: blur(0.75rem);
+  }
+
+  @media (max-width: 40rem) {
+    padding: $space-4;
+
+    .headerInner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .sessionStatus {
+      text-align: left;
+    }
+
+    .content {
+      padding: $space-6;
+    }
+  }
+}
