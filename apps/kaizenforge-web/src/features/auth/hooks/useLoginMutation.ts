@@ -27,6 +27,8 @@ export function useLoginMutation(): UseLoginMutationResult {
 
   const mutation = useMutation<LoginResponse, HttpError, LoginRequest>({
     mutationFn: async (payload) => {
+      abortControllerRef.current?.abort()
+
       const nextAbortController = new AbortController()
 
       abortControllerRef.current = nextAbortController
@@ -38,6 +40,7 @@ export function useLoginMutation(): UseLoginMutationResult {
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort()
+      abortControllerRef.current = null
     }
   }, [])
 

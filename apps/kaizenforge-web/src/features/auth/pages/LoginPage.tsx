@@ -1,23 +1,8 @@
 import { LoginForm } from '@/features/auth/components/LoginForm'
-import { authErrorKeys } from '@/features/auth/constants/authErrorKeys'
+import { authErrorMessages } from '@/features/auth/constants/authErrorMessages'
 import { useLoginForm } from '@/features/auth/hooks/useLoginForm'
 
 import styles from './LoginPage.module.scss'
-
-const authErrorMessages = {
-  [authErrorKeys.invalidCredentials]:
-    'The credentials you entered are not valid.',
-  [authErrorKeys.validation]:
-    'Please review the highlighted fields.',
-  [authErrorKeys.network]:
-    'Unable to reach the server. Check your connection and try again.',
-  [authErrorKeys.forbidden]:
-    'You do not have permission to access the application.',
-  [authErrorKeys.unavailable]:
-    'The authentication service is temporarily unavailable.',
-  [authErrorKeys.unexpected]:
-    'Something went wrong while signing in. Please try again.',
-} as const
 
 export function LoginPage() {
   const { form, isSubmitting, submitErrorKey, handleSubmit } = useLoginForm()

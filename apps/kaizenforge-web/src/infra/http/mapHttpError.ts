@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-import { messageErrorResponseSchema } from '@/features/auth/schemas/messageErrorResponseSchema'
-import { validationErrorResponseSchema } from '@/features/auth/schemas/validationErrorResponseSchema'
+import { httpMessageErrorSchema } from '@/infra/http/schemas/httpMessageErrorSchema'
+import { httpValidationErrorSchema } from '@/infra/http/schemas/httpValidationErrorSchema'
 
 import type {
   HttpError,
@@ -42,7 +42,7 @@ function getHttpErrorCode(status: number | null): HttpErrorCode {
 }
 
 function getValidationDetails(data: unknown): ValidationErrorDetail[] | undefined {
-  const parsedValidation = validationErrorResponseSchema.safeParse(data)
+  const parsedValidation = httpValidationErrorSchema.safeParse(data)
 
   if (!parsedValidation.success) {
     return undefined
@@ -52,13 +52,13 @@ function getValidationDetails(data: unknown): ValidationErrorDetail[] | undefine
 }
 
 function getResponseMessage(data: unknown, fallbackMessage: string) {
-  const parsedValidation = validationErrorResponseSchema.safeParse(data)
+  const parsedValidation = httpValidationErrorSchema.safeParse(data)
 
   if (parsedValidation.success) {
     return parsedValidation.data.message
   }
 
-  const parsedMessage = messageErrorResponseSchema.safeParse(data)
+  const parsedMessage = httpMessageErrorSchema.safeParse(data)
 
   if (parsedMessage.success) {
     return parsedMessage.data.message

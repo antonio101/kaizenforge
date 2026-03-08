@@ -1,7 +1,10 @@
 import type { BaseSyntheticEvent } from 'react'
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import {
+  useForm,
+  type UseFormReturn,
+} from 'react-hook-form'
 
 import type { AuthErrorKey } from '@/features/auth/constants/authErrorKeys'
 import { authErrorKeys } from '@/features/auth/constants/authErrorKeys'
@@ -14,7 +17,7 @@ import { normalizeLoginFormValues } from '@/features/auth/utils/normalizeLoginFo
 import type { HttpError, ValidationErrorDetail } from '@/infra/http/httpErrors'
 
 type UseLoginFormResult = {
-  form: ReturnType<typeof useForm<LoginFormValues>>
+  form: UseFormReturn<LoginFormValues>
   isSubmitting: boolean
   submitErrorKey: AuthErrorKey | null
   handleSubmit: (event?: BaseSyntheticEvent) => Promise<void>
@@ -35,7 +38,7 @@ function isLoginField(field: string): field is keyof LoginFormValues {
 
 function applyValidationErrors(
   details: ValidationErrorDetail[] | undefined,
-  setError: ReturnType<typeof useForm<LoginFormValues>>['setError']
+  setError: UseFormReturn<LoginFormValues>['setError']
 ) {
   if (!details) {
     return
