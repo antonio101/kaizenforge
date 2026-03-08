@@ -16,6 +16,12 @@ type UseLoginMutationResult = {
   handleReset: () => void
 }
 
+const inFlightError: HttpError = {
+  status: null,
+  code: 'canceled',
+  message: 'Login request already in progress',
+}
+
 export function useLoginMutation(): UseLoginMutationResult {
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -37,11 +43,7 @@ export function useLoginMutation(): UseLoginMutationResult {
 
   async function handleLogin(payload: LoginRequest): Promise<LoginResponse> {
     if (mutation.isPending) {
-      throw {
-        status: null,
-        code: 'canceled',
-        message: 'Login request already in progress',
-      } satisfies HttpError
+      throw inFlightError
     }
 
     return mutation.mutateAsync(payload)

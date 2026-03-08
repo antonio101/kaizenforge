@@ -7,6 +7,10 @@ export function mapAuthErrorToErrorKey(error: HttpError) {
     return authErrorKeys.invalidCredentials
   }
 
+  if (error.code === 'validation_error') {
+    return authErrorKeys.validation
+  }
+
   if (error.code === 'forbidden') {
     return authErrorKeys.forbidden
   }

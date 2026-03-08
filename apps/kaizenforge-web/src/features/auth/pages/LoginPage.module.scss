@@ -1,0 +1,38 @@
+@use '@/styles/_variables' as *;
+
+.LoginPage {
+  display: grid;
+  gap: $space-8;
+  width: min(100%, 28rem);
+
+  .content {
+    display: grid;
+    gap: $space-3;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: $space-2 $space-3;
+    border-radius: 999rem;
+    background: $color-accent-soft;
+    color: #c4b5fd;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .title {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    line-height: $line-height-tight;
+    letter-spacing: -0.02em;
+  }
+
+  .description {
+    margin: 0;
+    color: $color-text-secondary;
+    line-height: $line-height-relaxed;
+  }
+}

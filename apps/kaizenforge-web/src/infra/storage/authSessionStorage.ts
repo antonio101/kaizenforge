@@ -1,5 +1,6 @@
 import type { Session } from '@/features/auth/types/session'
 import { storageKeys } from '@/config/storageKeys'
+import { sessionSchema } from '@/features/auth/schemas/sessionSchema'
 import { browserStorage } from '@/infra/storage/browserStorage'
 
 export type AuthSessionStorage = {
@@ -8,29 +9,18 @@ export type AuthSessionStorage = {
   clearSession(): void
 }
 
-function isSession(value: unknown): value is Session {
-  if (!value || typeof value !== 'object') {
-    return false
-  }
-
-  const candidate = value as Record<string, unknown>
-
-  return (
-    typeof candidate.accessToken === 'string' &&
-    candidate.accessToken.trim().length > 0
-  )
-}
-
 export const authSessionStorage: AuthSessionStorage = {
   getSession() {
     const storedSession = browserStorage.getItem<unknown>(storageKeys.session)
 
-    if (!isSession(storedSession)) {
+    const parsedSession = sessionSchema.safeParse(storedSession)
+
+    if (!parsedSession.success) {
       browserStorage.removeItem(storageKeys.session)
       return null
     }
 
-    return storedSession
+    return parsedSession.data
   },
 
   setSession(session: Session) {

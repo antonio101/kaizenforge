@@ -3,8 +3,8 @@ import type { ReactNode } from 'react'
 import styles from './FieldError.module.scss'
 
 export type FieldErrorProps = {
-  id?: string
-  children?: ReactNode
+  id?: string | undefined
+  children?: ReactNode | undefined
 }
 
 export function FieldError({ id, children }: FieldErrorProps) {

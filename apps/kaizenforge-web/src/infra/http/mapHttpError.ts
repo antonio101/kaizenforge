@@ -1,6 +1,10 @@
 import axios from 'axios'
 
-import type { HttpError, HttpErrorCode } from './httpErrors'
+import type {
+  HttpError,
+  HttpErrorCode,
+  ValidationErrorDetail,
+} from './httpErrors'
 
 function getHttpErrorCode(status: number | null): HttpErrorCode {
   if (status === 400) {
@@ -34,6 +38,38 @@ function getHttpErrorCode(status: number | null): HttpErrorCode {
   return 'unknown_error'
 }
 
+function getValidationDetails(data: unknown): ValidationErrorDetail[] | undefined {
+  if (!data || typeof data !== 'object' || !('errors' in data)) {
+    return undefined
+  }
+
+  const rawErrors = (data as { errors?: unknown }).errors
+
+  if (!Array.isArray(rawErrors)) {
+    return undefined
+  }
+
+  const details = rawErrors.filter(
+    (item): item is ValidationErrorDetail =>
+      !!item &&
+      typeof item === 'object' &&
+      'field' in item &&
+      'message' in item &&
+      typeof item.field === 'string' &&
+      typeof item.message === 'string'
+  )
+
+  return details.length > 0 ? details : undefined
+}
+
+function getResponseMessage(data: unknown, fallbackMessage: string) {
+  if (!data || typeof data !== 'object' || !('message' in data)) {
+    return fallbackMessage
+  }
+
+  return typeof data.message === 'string' ? data.message : fallbackMessage
+}
+
 export function mapHttpError(error: unknown): HttpError {
   if (axios.isAxiosError(error)) {
     if (error.code === 'ERR_CANCELED') {
@@ -57,7 +93,8 @@ export function mapHttpError(error: unknown): HttpError {
     return {
       status,
       code: getHttpErrorCode(status),
-      message: error.message || 'Request failed',
+      message: getResponseMessage(error.response.data, error.message || 'Request failed'),
+      details: getValidationDetails(error.response.data),
     }
   }
 

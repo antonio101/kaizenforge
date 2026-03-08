@@ -10,8 +10,14 @@ export type HttpErrorCode =
   | 'canceled'
   | 'unknown_error'
 
+export type ValidationErrorDetail = {
+  field: string
+  message: string
+}
+
 export type HttpError = {
   status: number | null
   code: HttpErrorCode
   message: string
+  details?: ValidationErrorDetail[]
 }

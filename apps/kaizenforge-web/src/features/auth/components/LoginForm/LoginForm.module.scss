@@ -1,0 +1,12 @@
+@use '@/styles/_variables' as *;
+
+.LoginForm {
+  display: grid;
+  gap: $space-6;
+  width: 100%;
+
+  .fieldGroup {
+    display: grid;
+    gap: $space-3;
+  }
+}
