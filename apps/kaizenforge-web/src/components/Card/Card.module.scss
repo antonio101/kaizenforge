@@ -1,0 +1,9 @@
+@use '@/styles/_variables' as *;
+
+.Card {
+  border: 1px solid $color-surface-border;
+  border-radius: $radius-lg;
+  background: $color-surface;
+  box-shadow: $shadow-md;
+  backdrop-filter: blur(0.75rem);
+}

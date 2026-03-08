@@ -1,0 +1,80 @@
+@use '@/styles/_variables' as *;
+
+.Button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $control-height-md;
+  padding: 0 $space-5;
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  transition:
+    background-color $transition-base,
+    border-color $transition-base,
+    color $transition-base,
+    box-shadow $transition-base,
+    opacity $transition-base;
+
+  &:focus-visible {
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    opacity: 0.72;
+  }
+
+  .content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity $transition-base;
+  }
+
+  .content[data-loading='true'] {
+    opacity: 0;
+  }
+
+  .spinner {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.primary {
+  background: $color-accent;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-accent-hover;
+  }
+}
+
+.secondary {
+  border-color: $color-surface-border;
+  background: rgba(148, 163, 184, 0.08);
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: rgba(148, 163, 184, 0.14);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: rgba(148, 163, 184, 0.08);
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}

@@ -1,0 +1,22 @@
+@use '@/styles/_variables' as *;
+
+.Spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .track {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(229, 231, 235, 0.24);
+    border-top-color: currentColor;
+    border-radius: 999rem;
+    animation: spinner-rotate 0.7s linear infinite;
+  }
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
