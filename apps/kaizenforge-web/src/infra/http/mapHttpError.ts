@@ -1,5 +1,8 @@
 import axios from 'axios'
 
+import { messageErrorResponseSchema } from '@/features/auth/schemas/messageErrorResponseSchema'
+import { validationErrorResponseSchema } from '@/features/auth/schemas/validationErrorResponseSchema'
+
 import type {
   HttpError,
   HttpErrorCode,
@@ -39,35 +42,29 @@ function getHttpErrorCode(status: number | null): HttpErrorCode {
 }
 
 function getValidationDetails(data: unknown): ValidationErrorDetail[] | undefined {
-  if (!data || typeof data !== 'object' || !('errors' in data)) {
+  const parsedValidation = validationErrorResponseSchema.safeParse(data)
+
+  if (!parsedValidation.success) {
     return undefined
   }
 
-  const rawErrors = (data as { errors?: unknown }).errors
-
-  if (!Array.isArray(rawErrors)) {
-    return undefined
-  }
-
-  const details = rawErrors.filter(
-    (item): item is ValidationErrorDetail =>
-      !!item &&
-      typeof item === 'object' &&
-      'field' in item &&
-      'message' in item &&
-      typeof item.field === 'string' &&
-      typeof item.message === 'string'
-  )
-
-  return details.length > 0 ? details : undefined
+  return parsedValidation.data.errors
 }
 
 function getResponseMessage(data: unknown, fallbackMessage: string) {
-  if (!data || typeof data !== 'object' || !('message' in data)) {
-    return fallbackMessage
+  const parsedValidation = validationErrorResponseSchema.safeParse(data)
+
+  if (parsedValidation.success) {
+    return parsedValidation.data.message
   }
 
-  return typeof data.message === 'string' ? data.message : fallbackMessage
+  const parsedMessage = messageErrorResponseSchema.safeParse(data)
+
+  if (parsedMessage.success) {
+    return parsedMessage.data.message
+  }
+
+  return fallbackMessage
 }
 
 export function mapHttpError(error: unknown): HttpError {
@@ -90,11 +87,16 @@ export function mapHttpError(error: unknown): HttpError {
       }
     }
 
+    const details = getValidationDetails(error.response.data)
+
     return {
       status,
       code: getHttpErrorCode(status),
-      message: getResponseMessage(error.response.data, error.message || 'Request failed'),
-      details: getValidationDetails(error.response.data),
+      message: getResponseMessage(
+        error.response.data,
+        error.message || 'Request failed'
+      ),
+      ...(details ? { details } : {}),
     }
   }
 
