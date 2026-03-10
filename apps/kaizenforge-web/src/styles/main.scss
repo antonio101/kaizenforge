@@ -114,4 +114,10 @@ svg {
     font-size: $font-size-md;
     line-height: $line-height-relaxed;
   }
+
+  &Spinner {
+    display: flex;
+    justify-content: center;
+    margin-top: $space-8;
+  }
 }

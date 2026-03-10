@@ -82,6 +82,10 @@ export function useLoginForm(): UseLoginFormResult {
   }, [form, hasError, handleReset])
 
   const handleSubmit = form.handleSubmit(async (values) => {
+    if (isPending) {
+      return
+    }
+
     form.clearErrors()
 
     const normalizedValues = normalizeLoginFormValues(values)

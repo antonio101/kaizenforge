@@ -1,6 +1,8 @@
 import type { InputHTMLAttributes } from 'react'
 import { forwardRef } from 'react'
 
+import { joinClassNames } from '@/utils/joinClassNames'
+
 import styles from './Input.module.scss'
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -19,23 +21,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref
 ) {
-  const inputClassNames = [styles.Input]
-
-  if (hasError) {
-    inputClassNames.push(styles.hasError)
-  }
-
-  if (fullWidth) {
-    inputClassNames.push(styles.fullWidth)
-  }
-
-  if (hasTrailingAction) {
-    inputClassNames.push(styles.hasTrailingAction)
-  }
-
-  if (className) {
-    inputClassNames.push(className)
-  }
-
-  return <input ref={ref} className={inputClassNames.join(' ')} {...props} />
+  return (
+    <input
+      ref={ref}
+      className={joinClassNames(
+        styles.Input,
+        hasError && styles.hasError,
+        fullWidth && styles.fullWidth,
+        hasTrailingAction && styles.hasTrailingAction,
+        className
+      )}
+      {...props}
+    />
+  )
 })

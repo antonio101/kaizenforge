@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 import type { AuthErrorKey } from '@/features/auth/constants/authErrorKeys'
@@ -16,39 +15,13 @@ type UseLoginMutationResult = {
   handleReset: () => void
 }
 
-const inFlightError: HttpError = {
-  status: null,
-  code: 'canceled',
-  message: 'Login request already in progress',
-}
-
 export function useLoginMutation(): UseLoginMutationResult {
-  const abortControllerRef = useRef<AbortController | null>(null)
-
   const mutation = useMutation<LoginResponse, HttpError, LoginRequest>({
-    mutationFn: async (payload) => {
-      abortControllerRef.current?.abort()
-
-      const nextAbortController = new AbortController()
-
-      abortControllerRef.current = nextAbortController
-
-      return authApi.login(payload, nextAbortController.signal)
-    },
+    mutationFn: (payload) => authApi.login(payload),
+    retry: 0,
   })
 
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current?.abort()
-      abortControllerRef.current = null
-    }
-  }, [])
-
   async function handleLogin(payload: LoginRequest): Promise<LoginResponse> {
-    if (mutation.isPending) {
-      throw inFlightError
-    }
-
     return mutation.mutateAsync(payload)
   }
 

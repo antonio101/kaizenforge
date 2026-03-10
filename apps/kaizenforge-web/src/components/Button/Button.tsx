@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes } from 'react'
 import { forwardRef } from 'react'
 
 import { Spinner } from '@/components/Spinner'
+import { joinClassNames } from '@/utils/joinClassNames'
 
 import styles from './Button.module.scss'
 
@@ -26,22 +27,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref
 ) {
-  const buttonClassNames = [styles.Button, styles[variant]]
-
-  if (fullWidth) {
-    buttonClassNames.push(styles.fullWidth)
-  }
-
-  if (className) {
-    buttonClassNames.push(className)
-  }
-
   return (
     <button
       {...props}
       ref={ref}
       type={type}
-      className={buttonClassNames.join(' ')}
+      className={joinClassNames(
+        styles.Button,
+        styles[variant],
+        fullWidth && styles.fullWidth,
+        className
+      )}
       disabled={disabled || isLoading}
     >
       <span className={styles.content} data-loading={isLoading}>
