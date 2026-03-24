@@ -9,13 +9,16 @@ use App\Contexts\Auth\Domain\Repository\AccessTokenRepository;
 use App\Contexts\Auth\Domain\ValueObject\TokenHash;
 use App\Contexts\Auth\Domain\ValueObject\UserId;
 use App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Entity\DoctrineAccessToken;
+use App\Shared\Domain\Clock\Clock;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class DoctrineAccessTokenRepository extends ServiceEntityRepository implements AccessTokenRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Clock $clock,
+    ) {
         parent::__construct($registry, DoctrineAccessToken::class);
     }
 
@@ -30,9 +33,9 @@ final class DoctrineAccessTokenRepository extends ServiceEntityRepository implem
             revokedAt: $accessToken->revokedAt(),
         );
 
-        $em = $this->getEntityManager();
-        $em->persist($entity);
-        $em->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entity);
+        $entityManager->flush();
     }
 
     public function findValidByHash(TokenHash $hash): ?AccessToken
@@ -43,7 +46,7 @@ final class DoctrineAccessTokenRepository extends ServiceEntityRepository implem
             ->andWhere('t.revokedAt IS NULL')
             ->andWhere('t.expiresAt > :now')
             ->setParameter('tokenHash', $hash->value())
-            ->setParameter('now', new \DateTimeImmutable())
+            ->setParameter('now', $this->clock->now())
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -71,7 +74,7 @@ final class DoctrineAccessTokenRepository extends ServiceEntityRepository implem
             return;
         }
 
-        $entity->revoke(new \DateTimeImmutable());
+        $entity->revoke($this->clock->now());
         $this->getEntityManager()->flush();
     }
 }

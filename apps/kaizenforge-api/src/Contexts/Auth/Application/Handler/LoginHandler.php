@@ -13,7 +13,7 @@ use App\Contexts\Auth\Domain\Repository\AccessTokenRepository;
 use App\Contexts\Auth\Domain\Repository\UserRepository;
 use App\Contexts\Auth\Domain\Service\TokenGenerator;
 use App\Contexts\Auth\Domain\ValueObject\Email;
-use App\Shared\Infrastructure\Clock\SystemClock;
+use App\Shared\Domain\Clock\Clock;
 
 final readonly class LoginHandler
 {
@@ -22,7 +22,7 @@ final readonly class LoginHandler
         private PasswordVerifier $passwordVerifier,
         private AccessTokenRepository $accessTokenRepository,
         private TokenGenerator $tokenGenerator,
-        private SystemClock $clock,
+        private Clock $clock,
     ) {
     }
 

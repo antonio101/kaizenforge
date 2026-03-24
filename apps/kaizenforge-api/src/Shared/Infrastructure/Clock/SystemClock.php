@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Clock;
 
-final class SystemClock
+use App\Shared\Domain\Clock\Clock;
+
+final class SystemClock implements Clock
 {
     public function now(): \DateTimeImmutable
     {

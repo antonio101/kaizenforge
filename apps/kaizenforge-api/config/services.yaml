@@ -18,6 +18,9 @@ services:
       - '../src/Contexts/**/Infrastructure/Persistence/**/Entity/'
       - '../src/Contexts/**/Infrastructure/Http/Request/'
 
+  App\Shared\Domain\Clock\Clock:
+    alias: App\Shared\Infrastructure\Clock\SystemClock
+
   App\Contexts\Auth\Domain\Repository\UserRepository:
     alias: App\Contexts\Auth\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository
 
