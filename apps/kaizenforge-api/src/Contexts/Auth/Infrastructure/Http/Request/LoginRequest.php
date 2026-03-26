@@ -6,7 +6,7 @@ namespace App\Contexts\Auth\Infrastructure\Http\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class LoginRequest
+final readonly class LoginRequest
 {
     public function __construct(
         #[Assert\NotBlank]
