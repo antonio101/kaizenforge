@@ -18,6 +18,10 @@ services:
       - '../src/Contexts/**/Infrastructure/Persistence/**/Entity/'
       - '../src/Contexts/**/Infrastructure/Http/Request/'
 
+  App\Contexts\Auth\Infrastructure\Configuration\ConfiguredAccessTokenTtlProvider:
+    arguments:
+      $spec: '%env(string:ACCESS_TOKEN_TTL)%'
+
   App\Shared\Domain\Clock\Clock:
     alias: App\Shared\Infrastructure\Clock\SystemClock
 
@@ -32,3 +36,9 @@ services:
 
   App\Contexts\Auth\Domain\Service\TokenGenerator:
     alias: App\Contexts\Auth\Infrastructure\Security\RandomTokenGenerator
+
+  App\Contexts\Auth\Application\Port\AuthenticatedUserIdProvider:
+    alias: App\Contexts\Auth\Infrastructure\Security\SymfonyAuthenticatedUserIdProvider
+
+  App\Contexts\Auth\Application\Port\AccessTokenTtlProvider:
+    alias: App\Contexts\Auth\Infrastructure\Configuration\ConfiguredAccessTokenTtlProvider

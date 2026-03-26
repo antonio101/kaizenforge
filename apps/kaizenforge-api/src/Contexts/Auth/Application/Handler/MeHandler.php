@@ -5,23 +5,26 @@ declare(strict_types=1);
 namespace App\Contexts\Auth\Application\Handler;
 
 use App\Contexts\Auth\Application\DTO\AuthenticatedUserView;
-use App\Contexts\Auth\Application\Exception\AuthenticatedUserNotFound;
+use App\Contexts\Auth\Application\Exception\Unauthenticated;
+use App\Contexts\Auth\Application\Port\AuthenticatedUserIdProvider;
 use App\Contexts\Auth\Domain\Repository\UserRepository;
-use App\Contexts\Auth\Domain\ValueObject\UserId;
 
 final readonly class MeHandler
 {
     public function __construct(
+        private AuthenticatedUserIdProvider $authenticatedUserIdProvider,
         private UserRepository $userRepository,
     ) {
     }
 
-    public function __invoke(UserId $authenticatedUserId): AuthenticatedUserView
+    public function __invoke(): AuthenticatedUserView
     {
-        $user = $this->userRepository->findById($authenticatedUserId);
+        $user = $this->userRepository->findById(
+            $this->authenticatedUserIdProvider->get()
+        );
 
         if ($user === null || !$user->isActive()) {
-            throw new AuthenticatedUserNotFound();
+            throw new Unauthenticated();
         }
 
         return new AuthenticatedUserView(

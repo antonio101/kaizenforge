@@ -6,8 +6,9 @@ namespace App\Contexts\Auth\Application\Handler;
 
 use App\Contexts\Auth\Application\Command\LoginCommand;
 use App\Contexts\Auth\Application\DTO\LoginResult;
+use App\Contexts\Auth\Application\Exception\InvalidCredentials;
+use App\Contexts\Auth\Application\Port\AccessTokenTtlProvider;
 use App\Contexts\Auth\Application\Port\PasswordVerifier;
-use App\Contexts\Auth\Domain\Exception\InvalidCredentials;
 use App\Contexts\Auth\Domain\Model\AccessToken;
 use App\Contexts\Auth\Domain\Repository\AccessTokenRepository;
 use App\Contexts\Auth\Domain\Repository\UserRepository;
@@ -22,15 +23,20 @@ final readonly class LoginHandler
         private PasswordVerifier $passwordVerifier,
         private AccessTokenRepository $accessTokenRepository,
         private TokenGenerator $tokenGenerator,
+        private AccessTokenTtlProvider $accessTokenTtlProvider,
         private Clock $clock,
     ) {
     }
 
     public function __invoke(LoginCommand $command): LoginResult
     {
-        $user = $this->userRepository->findByEmail(
-            Email::fromString($command->email)
-        );
+        try {
+            $email = Email::fromString($command->email);
+        } catch (\InvalidArgumentException) {
+            throw new InvalidCredentials();
+        }
+
+        $user = $this->userRepository->findByEmail($email);
 
         if ($user === null || !$this->passwordVerifier->verify($user, $command->password)) {
             throw new InvalidCredentials();
@@ -46,7 +52,7 @@ final readonly class LoginHandler
             userId: $user->id(),
             plainToken: $plainToken,
             now: $this->clock->now(),
-            ttl: new \DateInterval('P7D'),
+            ttl: $this->accessTokenTtlProvider->get(),
         );
 
         $this->accessTokenRepository->save($accessToken);
