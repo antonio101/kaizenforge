@@ -19,7 +19,11 @@ final readonly class AccessTokenHandler implements AccessTokenHandlerInterface
 
     public function getUserBadgeFrom(string $accessToken): UserBadge
     {
-        $tokenHash = TokenHash::fromPlainToken($accessToken);
+        try {
+            $tokenHash = TokenHash::fromPlainToken($accessToken);
+        } catch (\InvalidArgumentException) {
+            throw new BadCredentialsException('Invalid credentials.');
+        }
 
         $token = $this->accessTokenRepository->findValidByHash($tokenHash);
 
