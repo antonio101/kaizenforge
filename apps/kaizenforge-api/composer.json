@@ -31,7 +31,11 @@
     "symfony/yaml": "^7.4"
   },
   "require-dev": {
+    "dama/doctrine-test-bundle": "^8.6",
     "doctrine/doctrine-fixtures-bundle": "^4.3",
+    "phpunit/phpunit": "^11.5",
+    "symfony/browser-kit": "7.4.*",
+    "symfony/css-selector": "7.4.*",
     "symfony/maker-bundle": "^1.60"
   },
   "autoload": {
@@ -60,6 +64,7 @@
     "auto-scripts": {
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd"
-    }
+    },
+    "test": "php bin/phpunit"
   }
 }

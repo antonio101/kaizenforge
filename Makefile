@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+.PHONY: help setup dev build prod deps migrate fixtures reset-demo workers down down-clean logs api-sh web-sh rebuild frontend-refresh tests test-db
+
 help:
 	@echo "Targets:"
 	@echo "  make setup             -> deps + dev + migrate + fixtures"
@@ -11,6 +13,7 @@ help:
 	@echo "  make fixtures          -> load Symfony demo fixtures"
 	@echo "  make reset-demo        -> reload demo fixtures"
 	@echo "  make workers           -> start optional workers"
+	@echo "  make tests             -> prepare test database and run backend test suite"
 	@echo "  make down              -> stop development containers"
 	@echo "  make down-clean        -> stop development containers and remove volumes"
 	@echo "  make logs              -> follow logs"
@@ -45,6 +48,15 @@ reset-demo:
 
 workers:
 	docker compose --profile workers up -d --build
+
+tests: dev test-db
+	docker compose exec php composer test
+
+test-db:
+	docker compose exec -e APP_ENV=test php php bin/console doctrine:database:drop --force --if-exists
+	docker compose exec -e APP_ENV=test php php bin/console doctrine:database:create
+	docker compose exec -e APP_ENV=test php php bin/console doctrine:migrations:migrate --no-interaction
+	docker compose exec -e APP_ENV=test php php bin/console doctrine:fixtures:load --no-interaction
 
 down:
 	docker compose --profile dev down
