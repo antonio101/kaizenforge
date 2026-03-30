@@ -6,51 +6,80 @@ namespace App\Tests\Unit\Contexts\Auth\Application\Handler;
 
 use App\Contexts\Auth\Application\Exception\Unauthenticated;
 use App\Contexts\Auth\Application\Handler\MeHandler;
-use App\Contexts\Auth\Application\Port\AuthenticatedUserIdProvider;
-use App\Contexts\Auth\Domain\Model\User;
-use App\Contexts\Auth\Domain\Repository\UserRepository;
-use App\Contexts\Auth\Domain\ValueObject\Email;
 use App\Contexts\Auth\Domain\ValueObject\UserId;
+use App\Tests\Support\Contexts\Auth\InMemoryUserRepository;
+use App\Tests\Support\Contexts\Auth\StubAuthenticatedUserIdProvider;
+use App\Tests\Support\Contexts\Auth\UserBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class MeHandlerTest extends TestCase
 {
     public function testItReturnsTheAuthenticatedUserView(): void
     {
-        $user = new User(
-            id: UserId::generate(),
-            email: Email::fromString('demo@kaizenforge.app'),
-            passwordHash: 'hash',
-            roles: ['ROLE_USER'],
-            isActive: true,
+        $userId = UserId::generate();
+        $user = UserBuilder::anActiveUser()
+            ->withId($userId)
+            ->withEmail('demo@kaizenforge.app')
+            ->withRoles(['ROLE_USER'])
+            ->build();
+
+        $authenticatedUserIdProvider = new StubAuthenticatedUserIdProvider($userId);
+        $userRepository = new InMemoryUserRepository([$user]);
+
+        $handler = new MeHandler(
+            $authenticatedUserIdProvider,
+            $userRepository,
         );
-
-        $provider = $this->createStub(AuthenticatedUserIdProvider::class);
-        $provider->method('get')->willReturn($user->id());
-
-        $repository = $this->createStub(UserRepository::class);
-        $repository->method('findById')->willReturn($user);
-
-        $handler = new MeHandler($provider, $repository);
 
         $result = $handler();
 
-        self::assertSame($user->id()->toString(), $result->id);
+        self::assertSame(1, $userRepository->findByIdCalls);
+        self::assertSame($userId->toString(), $result->id);
         self::assertSame('demo@kaizenforge.app', $result->email);
+        self::assertSame(['ROLE_USER'], $result->roles);
     }
 
-    public function testItThrowsUnauthenticatedWhenUserNotFound(): void
+    public function testItThrowsUnauthenticatedWhenTheUserCannotBeFound(): void
     {
-        $provider = $this->createStub(AuthenticatedUserIdProvider::class);
-        $provider->method('get')->willReturn(UserId::generate());
+        $authenticatedUserIdProvider = new StubAuthenticatedUserIdProvider(UserId::generate());
+        $userRepository = new InMemoryUserRepository();
 
-        $repository = $this->createStub(UserRepository::class);
-        $repository->method('findById')->willReturn(null);
-
-        $handler = new MeHandler($provider, $repository);
+        $handler = new MeHandler(
+            $authenticatedUserIdProvider,
+            $userRepository,
+        );
 
         $this->expectException(Unauthenticated::class);
 
-        $handler();
+        try {
+            $handler();
+        } finally {
+            self::assertSame(1, $userRepository->findByIdCalls);
+        }
+    }
+
+    public function testItThrowsUnauthenticatedWhenTheUserIsInactive(): void
+    {
+        $userId = UserId::generate();
+        $user = UserBuilder::anInactiveUser()
+            ->withId($userId)
+            ->withEmail('disabled@kaizenforge.app')
+            ->build();
+
+        $authenticatedUserIdProvider = new StubAuthenticatedUserIdProvider($userId);
+        $userRepository = new InMemoryUserRepository([$user]);
+
+        $handler = new MeHandler(
+            $authenticatedUserIdProvider,
+            $userRepository,
+        );
+
+        $this->expectException(Unauthenticated::class);
+
+        try {
+            $handler();
+        } finally {
+            self::assertSame(1, $userRepository->findByIdCalls);
+        }
     }
 }

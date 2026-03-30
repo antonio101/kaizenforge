@@ -6,14 +6,14 @@ namespace App\Tests\Unit\Contexts\Auth\Application\Handler;
 
 use App\Contexts\Auth\Application\Command\LogoutCommand;
 use App\Contexts\Auth\Application\Handler\LogoutHandler;
-use App\Tests\Support\Unit\Contexts\Auth\RecordingAccessTokenRepository;
+use App\Tests\Support\Contexts\Auth\InMemoryAccessTokenRepository;
 use PHPUnit\Framework\TestCase;
 
 final class LogoutHandlerTest extends TestCase
 {
     public function testItRevokesTheTokenUsingTheHashDerivedFromThePlainToken(): void
     {
-        $accessTokenRepository = new RecordingAccessTokenRepository();
+        $accessTokenRepository = new InMemoryAccessTokenRepository();
 
         $handler = new LogoutHandler($accessTokenRepository);
 
@@ -26,18 +26,18 @@ final class LogoutHandlerTest extends TestCase
         );
     }
 
-    public function testItRejectsAnEmptyPlainAccessToken(): void
+    public function testItRejectsAnEmptyPlainToken(): void
     {
-        $accessTokenRepository = new RecordingAccessTokenRepository();
+        $accessTokenRepository = new InMemoryAccessTokenRepository();
 
         $handler = new LogoutHandler($accessTokenRepository);
 
+        $this->expectException(\InvalidArgumentException::class);
+
         try {
             $handler(new LogoutCommand(''));
-            self::fail('Expected InvalidArgumentException to be thrown.');
-        } catch (\InvalidArgumentException) {
+        } finally {
+            self::assertCount(0, $accessTokenRepository->revokedHashes);
         }
-
-        self::assertCount(0, $accessTokenRepository->revokedHashes);
     }
 }
