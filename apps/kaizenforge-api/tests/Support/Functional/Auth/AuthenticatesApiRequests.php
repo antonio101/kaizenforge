@@ -8,16 +8,23 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 trait AuthenticatesApiRequests
 {
-    protected function authenticate(KernelBrowser $client): string
-    {
-        $client->request('POST', '/api/v1/auth/login', [], [], [
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
-            'email' => 'demo@kaizenforge.app',
-            'password' => 'Demo1234!'
-        ]));
+    protected function authenticate(
+        KernelBrowser $client,
+        string $email = 'demo@kaizenforge.app',
+        string $password = 'Demo1234!'
+    ): string {
+        $this->jsonRequest($client, 'POST', '/api/v1/auth/login', [
+            'email' => $email,
+            'password' => $password,
+        ]);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        self::assertResponseIsSuccessful();
+
+        $data = $this->responseJson($client);
+
+        self::assertArrayHasKey('accessToken', $data);
+        self::assertIsString($data['accessToken']);
+        self::assertNotSame('', $data['accessToken']);
 
         return $data['accessToken'];
     }

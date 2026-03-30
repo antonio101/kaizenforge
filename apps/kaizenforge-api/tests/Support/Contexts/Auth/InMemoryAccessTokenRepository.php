@@ -7,6 +7,8 @@ namespace App\Tests\Support\Contexts\Auth;
 use App\Contexts\Auth\Domain\Model\AccessToken;
 use App\Contexts\Auth\Domain\Repository\AccessTokenRepository;
 use App\Contexts\Auth\Domain\ValueObject\TokenHash;
+use App\Shared\Domain\Clock\Clock;
+use App\Shared\Infrastructure\Clock\SystemClock;
 
 final class InMemoryAccessTokenRepository implements AccessTokenRepository
 {
@@ -25,6 +27,13 @@ final class InMemoryAccessTokenRepository implements AccessTokenRepository
      */
     public array $revokedHashes = [];
 
+    private readonly Clock $clock;
+
+    public function __construct(?Clock $clock = null)
+    {
+        $this->clock = $clock ?? new SystemClock();
+    }
+
     public function save(AccessToken $accessToken): void
     {
         $this->savedAccessTokens[] = $accessToken;
@@ -35,9 +44,13 @@ final class InMemoryAccessTokenRepository implements AccessTokenRepository
         $this->requestedHashes[] = $hash;
 
         foreach ($this->savedAccessTokens as $accessToken) {
-            if ($accessToken->tokenHash()->value() === $hash->value()) {
-                return $accessToken;
+            if ($accessToken->tokenHash()->value() !== $hash->value()) {
+                continue;
             }
+
+            return $accessToken->isValidAt($this->clock->now())
+                ? $accessToken
+                : null;
         }
 
         return null;
@@ -46,5 +59,15 @@ final class InMemoryAccessTokenRepository implements AccessTokenRepository
     public function revokeByHash(TokenHash $hash): void
     {
         $this->revokedHashes[] = $hash;
+
+        foreach ($this->savedAccessTokens as $accessToken) {
+            if ($accessToken->tokenHash()->value() !== $hash->value()) {
+                continue;
+            }
+
+            $accessToken->revoke($this->clock->now());
+
+            return;
+        }
     }
 }
